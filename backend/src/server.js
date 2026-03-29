@@ -11,24 +11,19 @@ const app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 
-const corsOrigin =
-  process.env.CLIENT_ORIGIN && process.env.CLIENT_ORIGIN.length > 0
-    ? process.env.CLIENT_ORIGIN.split(',').map((origin) => origin.trim())
-    : '*';
-
-app.use(
-  cors({
-    origin: corsOrigin,
-  })
-);
+app.use(cors({
+  origin: "https://shivani-photo-and-films.vercel.app", // Your Vercel link
+  credentials: true
+}));
 app.use(express.json());
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: corsOrigin,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  },
+    origin: "https://shivani-photo-and-films.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
 });
 
 // Middleware to attach io to req
