@@ -195,7 +195,7 @@ const Home = () => {
           {/* Right Column - Text Only */}
           <div className={`space-y-8 ${isClosingVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}>
             <div className="text-left space-y-2">
-              <p className="text-amber-200 font-display text-xl md:text-2xl drop-shadow-md">I’m here to deliver a</p>
+              <p className="text-amber-200 font-display text-xl md:text-2xl drop-shadow-md">We are here to deliver a</p>
               <div className="text-slate-300 text-base md:text-lg space-y-1 font-medium drop-shadow-sm">
                 <p>• purposeful</p>
                 <p>• elevated</p>
@@ -222,7 +222,7 @@ const Home = () => {
           {/* Left Column - Text */}
           <div className={`space-y-12 text-left ${isNewSectionVisible ? 'animate-slide-left' : 'opacity-0'}`}>
             <div className="space-y-2">
-              <p className="text-amber-200 font-display text-2xl md:text-3xl drop-shadow-md">I’m here to create a</p>
+              <p className="text-amber-200 font-display text-2xl md:text-3xl drop-shadow-md">We are here to create a</p>
               <div className="text-slate-300 text-lg md:text-xl space-y-1 font-medium drop-shadow-sm flex flex-col items-start">
                 <p>• purposeful</p>
                 <p>• elevated</p>
