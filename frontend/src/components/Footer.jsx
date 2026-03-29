@@ -83,8 +83,8 @@ const Footer = () => {
           </a>
         </div>
       </div>
-      <div className="border-t border-white/20 py-6 mt-8 flex justify-center">
-        <a href="/admin" className="text-xs text-slate-500 hover:text-amber-200 transition-colors">
+      <div className="border-t border-white/20 py-6 mt-8 flex justify-center px-4">
+        <a href="/admin" className="text-xs text-slate-500 hover:text-amber-200 transition-colors text-center block">
           &copy; 2026 Shivani Photo And Films. All rights reserved created by prathamesh patil
         </a>
       </div>
