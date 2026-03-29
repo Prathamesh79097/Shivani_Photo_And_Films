@@ -1,0 +1,226 @@
+.hero-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-frame::before,
+.hero-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(700px circle at 15% 30%, rgba(241, 194, 125, 0.2), transparent 40%);
+}
+
+.hero-frame::after {
+  background: radial-gradient(700px circle at 85% 10%, rgba(125, 195, 241, 0.18), transparent 38%);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+}
+
+@keyframes zoomInOut {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.zoom-animation {
+  animation: zoomInOut 8s ease-in-out infinite;
+}
+
+@keyframes arrowSlide {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-left {
+  opacity: 0;
+  /* Star invisible */
+  animation: slideInLeft 1s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-right {
+  opacity: 0;
+  animation: slideInRight 1s ease-out forwards;
+}
+
+@keyframes textBreathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.animate-text-breathe {
+  animation: textBreathe 6s ease-in-out infinite;
+}
+
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.delay-2 {
+  animation-delay: 0.6s;
+  /* Longer delay for the second element */
+}
+
+.preview-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.1));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.preview-card:hover,
+.preview-card:active {
+  transform: translateY(-4px);
+  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
+}
+
+.preview-card:hover::before,
+.preview-card:active::before {
+  opacity: 1;
+}
+
+.preview-card:hover .arrow-animation,
+.preview-card:active .arrow-animation,
+.preview-card:focus-within .arrow-animation,
+.group:hover .arrow-animation,
+.group:active .arrow-animation,
+.group:focus-within .arrow-animation {
+  animation: arrowSlide 1s ease-in-out infinite;
+}
+
+/* Team Section Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  /* Star invisible */
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.team-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.01);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  /* Enhanced Shadow */
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  /* Match .glass-panel border radius if applicable, or parent's */
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(241, 194, 125, 0.1), rgba(241, 194, 125, 0));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.team-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(241, 194, 125, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.03);
+  z-index: 10;
+}
+
+.team-card img {
+  transition: transform 0.6s ease;
+}
+
+.team-card:hover img {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+
+  .animate-slide-left,
+  .animate-slide-right {
+    animation-name: fadeInUp !important;
+    transform: translateY(20px);
+    /* Reset start position for fadeInUp */
+  }
+}

@@ -1,0 +1,7 @@
+node_modules/
+.env
+db_dump.json
+sections_dump.json
+db_output.txt
+order.txt
+uploads/
