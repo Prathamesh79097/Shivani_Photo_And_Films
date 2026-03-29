@@ -107,7 +107,7 @@ const Home = () => {
           {/* Right Column - Text Only */}
           <div className={`space-y-8 ${isStoryVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}>
             <div className="text-left space-y-2">
-              <p className="text-amber-200 font-display text-xl md:text-2xl drop-shadow-md">I'm here to give you a</p>
+              <p className="text-amber-200 font-display text-xl md:text-2xl drop-shadow-md">We are here to give you a</p>
               <div className="text-slate-300 text-base md:text-lg space-y-1 font-medium drop-shadow-sm">
                 <p>• meaningful</p>
                 <p>• stress-free</p>
@@ -118,8 +118,8 @@ const Home = () => {
 
             <div className="text-slate-200 leading-relaxed text-base md:text-lg border-l-2 border-amber-500/40 pl-6 drop-shadow-sm">
               <p>
-                Every step of the way, I’ll be there capturing memories that let you relive your day.
-                I want your photos to bring effortless memories and all the feels chills down the spine, goosebumps and all.
+                Every step of the way, We will be there capturing memories that let you relive your day.
+                We want your photos to bring effortless memories and all the feels chills down the spine, goosebumps and all.
               </p>
             </div>
           </div>
@@ -134,7 +134,7 @@ const Home = () => {
           {/* Left Column - Text */}
           <div className={`space-y-12 text-left ${isPhilosophyVisible ? 'animate-slide-left' : 'opacity-0'}`}>
             <div className="space-y-2">
-              <p className="text-amber-200 font-display text-2xl md:text-3xl drop-shadow-md">My goal is to provide a</p>
+              <p className="text-amber-200 font-display text-2xl md:text-3xl drop-shadow-md">Our goal is to provide a</p>
               <div className="text-slate-300 text-lg md:text-xl space-y-1 font-medium drop-shadow-sm flex flex-col items-start">
                 <p>• vibrant</p>
                 <p>• effortless</p>
@@ -145,8 +145,8 @@ const Home = () => {
 
             <div className="text-slate-200 leading-relaxed text-base md:text-lg border-l-2 border-amber-500/40 pl-6 text-left max-w-2xl drop-shadow-sm">
               <p>
-                I’ll be by your side throughout your big day, capturing the energy and the people you love most.
-                My goal is to preserve every hug, every toast, and every heartfelt moment—images that make your heart swell and your spirit glow.
+                We will be by your side throughout your big day, capturing the energy and the people you love most.
+                Our goal is to preserve every hug, every toast, and every heartfelt moment—images that make your heart swell and your spirit glow.
               </p>
             </div>
           </div>
@@ -206,7 +206,7 @@ const Home = () => {
 
             <div className="text-slate-200 leading-relaxed text-base md:text-lg border-l-2 border-amber-500/40 pl-6 drop-shadow-sm">
               <p>
-                I work closely with you to capture your brand’s essence, focusing on the details that matter.
+                We work closely with you to capture your brand’s essence, focusing on the details that matter.
                 Every image is crafted to elevate your product—creating visuals that stop the scroll and build trust.
               </p>
             </div>
@@ -233,7 +233,7 @@ const Home = () => {
 
             <div className="text-slate-200 leading-relaxed text-base md:text-lg border-l-2 border-amber-500/40 pl-6 text-left max-w-2xl drop-shadow-sm">
               <p>
-                From subtle expressions to powerful presence, I focus on the details that matter. The result: Portraits that feel natural, confident, and unmistakably you—images that connect at first glance.
+                From subtle expressions to powerful presence, We focus on the details that matter. The result: Portraits that feel natural, confident, and unmistakably you—images that connect at first glance.
               </p>
             </div>
           </div>
