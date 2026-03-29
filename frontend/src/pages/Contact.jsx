@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import SectionHeader from '../components/SectionHeader';
-import { contactDetails, API_BASE, testimonials as defaultTestimonials } from '../data/constants';
+import { contactDetails, API_BASE } from '../data/constants';
 import { FaWhatsapp, FaPhoneAlt, FaInstagram, FaClock, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 
@@ -16,33 +16,10 @@ const Contact = () => {
       try {
         const res = await fetch(`${API_BASE}/api/feedbacks`);
         if (res.ok) {
-          const data = await res.json();
-          if (data && data.length > 0) {
-            setVisibleFeedbacks(data);
-          } else {
-            setVisibleFeedbacks(defaultTestimonials.map((t, i) => ({
-              _id: `default-${i}`,
-              name: t.name,
-              message: t.note,
-              rating: 5
-            })));
-          }
-        } else {
-          setVisibleFeedbacks(defaultTestimonials.map((t, i) => ({
-            _id: `default-${i}`,
-            name: t.name,
-            message: t.note,
-            rating: 5
-          })));
+          setVisibleFeedbacks(await res.json());
         }
       } catch (err) {
         console.error('Failed to load feedbacks');
-        setVisibleFeedbacks(defaultTestimonials.map((t, i) => ({
-          _id: `default-${i}`,
-          name: t.name,
-          message: t.note,
-          rating: 5
-        })));
       }
     };
     fetchFeedbacks();
