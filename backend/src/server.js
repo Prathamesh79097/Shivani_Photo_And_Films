@@ -12,7 +12,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 app.use(cors({
-  origin: "https://shivani-photo-and-films.vercel.app", // Your Vercel link
+  origin: true, // Allow any frontend Vercel URL dynamically
   credentials: true
 }));
 app.use(express.json());
@@ -20,7 +20,7 @@ app.use(express.json());
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://shivani-photo-and-films.vercel.app",
+    origin: true,
     methods: ["GET", "POST"],
     credentials: true
   }
