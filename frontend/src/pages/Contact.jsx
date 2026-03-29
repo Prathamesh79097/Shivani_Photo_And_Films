@@ -5,7 +5,7 @@ import { FaWhatsapp, FaPhoneAlt, FaInstagram, FaClock, FaMapMarkerAlt, FaStar } 
 import { MdEmail } from 'react-icons/md';
 
 const Contact = () => {
-  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [contactForm, setContactForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [feedbackForm, setFeedbackForm] = useState({ name: '', email: '', rating: 5, message: '' });
   const [status, setStatus] = useState({ contact: '', feedback: '' });
   const [loading, setLoading] = useState({ contact: false, feedback: false });
@@ -38,7 +38,7 @@ const Contact = () => {
       if (!res.ok) {
         throw new Error('Unable to send inquiry');
       }
-      setContactForm({ name: '', email: '', message: '' });
+      setContactForm({ name: '', email: '', phone: '', message: '' });
       setStatus((prev) => ({ ...prev, contact: 'Inquiry sent successfully.' }));
     } catch (err) {
       setStatus((prev) => ({
@@ -122,6 +122,14 @@ const Contact = () => {
                 className="w-full rounded-lg bg-slate-900/60 border border-white/10 px-4 py-3 text-slate-100 placeholder-slate-500"
               />
             </div>
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              required
+              value={contactForm.phone}
+              onChange={(e) => setContactForm((prev) => ({ ...prev, phone: e.target.value }))}
+              className="w-full rounded-lg bg-slate-900/60 border border-white/10 px-4 py-3 text-slate-100 placeholder-slate-500"
+            />
             <textarea
               placeholder="What do you have in mind? Dates, location, vibe."
               required

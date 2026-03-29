@@ -410,7 +410,18 @@ const Admin = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-semibold text-slate-100">{item.name}</p>
-                        <p className="text-xs text-slate-400">{item.email}</p>
+                        <div className="flex items-center gap-3 mt-1">
+                          {item.email && (
+                            <a href={`mailto:${item.email}`} className="text-xs text-slate-400 hover:text-amber-200 transition-colors">
+                              {item.email}
+                            </a>
+                          )}
+                          {item.phone && (
+                            <a href={`tel:${item.phone}`} className="text-xs text-slate-400 hover:text-amber-200 transition-colors">
+                              {item.phone}
+                            </a>
+                          )}
+                        </div>
                       </div>
                       <button
                         onClick={() => handleDeleteInquiry(item._id)}

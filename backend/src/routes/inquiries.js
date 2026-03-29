@@ -5,16 +5,16 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, phone, message } = req.body;
 
-  if (!name || !email || !message) {
+  if (!name || !email || !phone || !message) {
     return res
       .status(400)
-      .json({ message: 'Name, email, and message are required' });
+      .json({ message: 'Name, email, phone, and message are required' });
   }
 
   try {
-    const inquiry = await Inquiry.create({ name, email, message });
+    const inquiry = await Inquiry.create({ name, email, phone, message });
     return res.status(201).json(inquiry);
   } catch (err) {
     console.error('Create inquiry error:', err.message);
