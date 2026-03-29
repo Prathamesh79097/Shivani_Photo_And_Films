@@ -12,6 +12,9 @@ const Admin = () => {
   const [inquiries, setInquiries] = useState([]);
   const [gallerySections, setGallerySections] = useState([]);
   const [services, setServices] = useState([]);
+  const [accountForm, setAccountForm] = useState({ username: '', newPassword: '' });
+  const [accountStatus, setAccountStatus] = useState('');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
   const [serviceForm, setServiceForm] = useState({ name: '', price: '', perks: '' });
   const [status, setStatus] = useState({ auth: '' });
@@ -79,6 +82,7 @@ const Admin = () => {
       }
       const data = await res.json();
       setToken(data.token);
+      setAccountForm({ username: data.username, newPassword: '' });
       setStatus((prev) => ({ ...prev, auth: 'Logged in successfully.' }));
       setLoginForm({ username: '', password: '' });
       // fetchAdminData is triggered by useEffect on token change
@@ -340,6 +344,59 @@ const Admin = () => {
     setToken('');
     setFeedbacks([]);
     setInquiries([]);
+    setAccountForm({ username: '', newPassword: '' });
+    setIsProfileOpen(false);
+  };
+
+  const handleChangeUsername = async () => {
+    if (!token || !accountForm.username) return;
+    setAccountStatus('Updating username...');
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ username: accountForm.username })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAccountStatus('Username updated!');
+      } else {
+        setAccountStatus(data.message || 'Update failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setAccountStatus('Update failed');
+    }
+    setTimeout(() => setAccountStatus(''), 3000);
+  };
+
+  const handleChangePassword = async () => {
+    if (!token || !accountForm.newPassword) return;
+    setAccountStatus('Updating password...');
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ newPassword: accountForm.newPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAccountStatus('Password updated!');
+        setAccountForm(prev => ({ ...prev, newPassword: '' })); // clear password field
+      } else {
+        setAccountStatus(data.message || 'Update failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setAccountStatus('Update failed');
+    }
+    setTimeout(() => setAccountStatus(''), 3000);
   };
 
   return (
@@ -379,22 +436,80 @@ const Admin = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-300">Authenticated as admin</p>
-            <div className="flex items-center gap-3">
-              {adminLoading && <span className="text-xs text-amber-200">Refreshing data…</span>}
+          <div className="flex items-start justify-between relative">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <p className="text-sm text-slate-300">Authenticated as admin</p>
+                <button
+                  onClick={() => fetchAdminData(token)}
+                  className="px-3 py-1 rounded-full border border-white/10 text-xs text-slate-300 hover:bg-white/5 transition"
+                >
+                  {adminLoading ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
+            </div>
+            
+            <div className="relative">
               <button
-                onClick={() => fetchAdminData(token)}
-                className="px-3 py-2 rounded-full border border-white/10 text-sm"
+                type="button"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-slate-800 transition shadow-glow border border-amber-300/40 overflow-hidden"
               >
-                Refresh
+                <img src="/logo 2.png" alt="Admin Avatar" className="w-7 h-7 object-contain" />
               </button>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-2 rounded-full border border-white/10 text-sm"
-              >
-                Logout
-              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 top-14 z-50 glass-panel p-5 shadow-2xl w-72 md:w-80 rounded-xl border border-white/10 animate-fade-in flex flex-col gap-4">
+                  <h3 className="text-lg font-display text-amber-200 border-b border-white/10 pb-2">Profile</h3>
+                  
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="text"
+                      placeholder="Username"
+                      required
+                      value={accountForm.username}
+                      onChange={(e) => setAccountForm({ ...accountForm, username: e.target.value })}
+                      className="w-full rounded bg-slate-900 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-200/50 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleChangeUsername}
+                      className="w-full bg-amber-300 text-slate-900 font-semibold py-1.5 rounded text-sm hover:bg-amber-200 transition"
+                    >
+                      Change Username
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
+                    <input
+                      type="password"
+                      placeholder="New Password"
+                      value={accountForm.newPassword}
+                      onChange={(e) => setAccountForm({ ...accountForm, newPassword: e.target.value })}
+                      className="w-full rounded bg-slate-900 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-200/50 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleChangePassword}
+                      className="w-full bg-amber-300 text-slate-900 font-semibold py-1.5 rounded text-sm hover:bg-amber-200 transition disabled:opacity-50"
+                      disabled={!accountForm.newPassword}
+                    >
+                      Change Password
+                    </button>
+                  </div>
+
+                  {accountStatus && <p className="text-xs text-amber-200 text-center mt-1">{accountStatus}</p>}
+
+                  <div className="pt-2 border-t border-white/10 mt-1">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-3 py-2 rounded border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
