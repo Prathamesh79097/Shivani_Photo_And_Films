@@ -166,7 +166,7 @@ export const previewCards = [
   {
     title: 'About Us',
     blurb:
-      'Founded by Shivani, we craft soulful visuals that celebrate families, brands, and milestones.',
+      'Founded by Ajit Pawar, we craft soulful visuals that celebrate families, brands, and milestones.',
   },
   {
     title: 'Services',
