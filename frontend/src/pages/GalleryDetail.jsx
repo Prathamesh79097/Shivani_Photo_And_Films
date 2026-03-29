@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { API_BASE } from '../data/constants';
+import { API_BASE, gallerySections as defaultGallerySections } from '../data/constants';
 import SectionHeader from '../components/SectionHeader';
 import CinematicPlayer from '../components/CinematicPlayer';
 
@@ -19,11 +19,21 @@ const GalleryDetail = () => {
                 const res = await fetch(`${API_BASE}/api/gallery`);
                 if (res.ok) {
                     const data = await res.json();
-                    const found = data.find((s) => s.slug === slug);
+                    if (data && data.length > 0) {
+                        const found = data.find((s) => s.slug === slug);
+                        setSection(found);
+                    } else {
+                        const found = defaultGallerySections.find((s) => s.slug === slug);
+                        setSection(found);
+                    }
+                } else {
+                    const found = defaultGallerySections.find((s) => s.slug === slug);
                     setSection(found);
                 }
             } catch (err) {
                 console.error('Failed to fetch gallery', err);
+                const found = defaultGallerySections.find((s) => s.slug === slug);
+                setSection(found);
             } finally {
                 setLoading(false);
             }

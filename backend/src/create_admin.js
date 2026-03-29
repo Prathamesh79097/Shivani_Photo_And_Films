@@ -1,11 +1,12 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 
 console.log('Starting create_admin...');
 
-// Default URI matches .env
-const uri = "mongodb://localhost:27017/shivani-photos";
+// Use MONGO_URI from .env if available
+const uri = process.env.MONGO_URI || "mongodb://localhost:27017/shivani-photos";
 
 const createAdmin = async () => {
     try {

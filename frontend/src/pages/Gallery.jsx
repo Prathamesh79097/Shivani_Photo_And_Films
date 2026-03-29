@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import SectionHeader from '../components/SectionHeader';
-import { API_BASE } from '../data/constants';
+import { API_BASE, gallerySections as defaultGallerySections } from '../data/constants';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 
 import { socket } from '../socket';
@@ -73,10 +73,17 @@ const Gallery = () => {
       const res = await fetch(`${API_BASE}/api/gallery`);
       if (res.ok) {
         const data = await res.json();
-        setGallerySections(data);
+        if (data && data.length > 0) {
+          setGallerySections(data);
+        } else {
+          setGallerySections(defaultGallerySections);
+        }
+      } else {
+        setGallerySections(defaultGallerySections);
       }
     } catch (err) {
       console.error('Failed to fetch gallery', err);
+      setGallerySections(defaultGallerySections);
     } finally {
       setLoading(false);
     }
