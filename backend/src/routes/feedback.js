@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 // Public: Fetch visible feedbacks
 router.get('/', async (_req, res) => {
   try {
-    const feedbacks = await Feedback.find({ isVisible: true }).sort({ createdAt: -1 });
+    const feedbacks = await Feedback.find({}).sort({ createdAt: -1 });
     return res.json(feedbacks);
   } catch (err) {
     console.error('Fetch public feedback error:', err.message);
