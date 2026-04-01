@@ -23,7 +23,7 @@ const TEAM_MEMBERS = [
     description: 'As the skilled drone operator at Shivani Photo and Films, Sushant captures breathtaking aerial shots that elevate every project. With sharp angles and creative framing, they add a unique cinematic touch.'
   },
   {
-    name: 'Mr. Sagar Khatavkar',
+    name: 'Mr. Harish Jadhav',
     role: 'Cinematographer',
     image: '/sagarkhatavkar.jpeg',
     description: 'As the cinematographer at Shivani Photo and Films, he turns real moments into cinematic memories with a unique storytelling style. Their work transforms these moments into beautifully crafted cinematic memories.'
