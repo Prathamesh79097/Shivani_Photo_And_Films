@@ -25,7 +25,7 @@ const TEAM_MEMBERS = [
   {
     name: 'Mr. Harish Jadhav',
     role: 'Cinematographer',
-    image: '/sagarkhatavkar.jpeg',
+    image: '/harishjadhav.jpeg',
     description: 'As the cinematographer at Shivani Photo and Films, he turns real moments into cinematic memories with a unique storytelling style. Their work transforms these moments into beautifully crafted cinematic memories.'
   }
 ];
