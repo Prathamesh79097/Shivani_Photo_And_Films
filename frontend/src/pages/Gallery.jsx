@@ -74,7 +74,11 @@ const Gallery = () => {
       if (res.ok) {
         const data = await res.json();
         if (data && data.length > 0) {
-          setGallerySections(data);
+          const filteredData = data.filter(item => 
+            !item.slug?.toLowerCase().includes('cinematic') &&
+            !item.title?.toLowerCase().includes('cinematic')
+          );
+          setGallerySections(filteredData);
         } else {
           setGallerySections(defaultGallerySections);
         }
