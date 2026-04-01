@@ -31,7 +31,7 @@ const GalleryCard = ({ item, index }) => {
           <img
             src={
               ['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(item.slug) || item.title.toLowerCase().includes('cinematic')
-                ? '/Cinematic_Shoots.jpeg'
+                ? '/cinematic_cover.jpeg'
                 : (item.coverImage || item.image)?.startsWith('/uploads/')
                   ? `${API_BASE}${item.coverImage || item.image}`
                   : item.coverImage || item.image
@@ -74,11 +74,7 @@ const Gallery = () => {
       if (res.ok) {
         const data = await res.json();
         if (data && data.length > 0) {
-          const filteredData = data.filter(item => 
-            !item.slug?.toLowerCase().includes('cinematic') &&
-            !item.title?.toLowerCase().includes('cinematic')
-          );
-          setGallerySections(filteredData);
+          setGallerySections(data);
         } else {
           setGallerySections(defaultGallerySections);
         }
