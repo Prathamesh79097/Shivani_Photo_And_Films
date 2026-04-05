@@ -51,7 +51,11 @@ app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/services', require('./routes/services'));
 app.use('/api/gallery', require('./routes/gallery'));
 
-// Static file serving removed as it operates purely as an API
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Serve static files from the frontend
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 // Handle client-side routing
 app.get([/(.*)/], (_req, res) => {

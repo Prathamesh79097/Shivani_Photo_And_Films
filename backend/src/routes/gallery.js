@@ -1,9 +1,41 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../../config/cloudinary');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const GallerySection = require('../models/GallerySection');
 const auth = require('../middleware/auth');
-const cloudinary = require('cloudinary').v2;
+
+// Configure Multer for file upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadPath = path.join(__dirname, '../../uploads');
+        // Ensure directory exists
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        // secure unique filename
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, 'file-' + uniqueSuffix + path.extname(file.originalname));
+    },
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png|webp|mp4|webm|ogg/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only images and videos are allowed'));
+    },
+});
 
 // Helper to create slug
 const createSlug = (text) => {
@@ -48,7 +80,7 @@ router.post('/', auth, upload.single('coverImage'), async (req, res) => {
             title,
             description,
             slug,
-            coverImage: req.file ? req.file.path : undefined,
+            coverImage: req.file ? `/uploads/${req.file.filename}` : undefined,
             images: [],
             videos: []
         });
@@ -67,18 +99,6 @@ router.delete('/:id', auth, async (req, res) => {
         const section = await GallerySection.findById(req.params.id);
         if (!section) {
             return res.status(404).json({ message: 'Section not found' });
-        }
-
-        // Ideally, we would also iterate and delete images/videos from Cloudinary here
-        if (section.images && section.images.length > 0) {
-            for (const img of section.images) {
-                if (img.publicId) await cloudinary.uploader.destroy(img.publicId);
-            }
-        }
-        if (section.videos && section.videos.length > 0) {
-            for (const vid of section.videos) {
-                if (vid.publicId) await cloudinary.uploader.destroy(vid.publicId, { resource_type: 'video' });
-            }
         }
 
         await GallerySection.findByIdAndDelete(req.params.id);
@@ -100,16 +120,14 @@ router.post(
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            const imageUrl = req.file.path;
-            const publicId = req.file.filename;
-
+            const fileUrl = `/uploads/${req.file.filename}`;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
                 return res.status(404).json({ message: 'Section not found' });
             }
 
-            section.images.push({ url: imageUrl, publicId: publicId });
+            section.images.push(fileUrl);
             await section.save();
 
             req.io.emit('gallery-updated');
@@ -121,7 +139,7 @@ router.post(
     }
 );
 
-// POST /api/gallery/:slug/videos - Add video
+// POST /api/gallery/:slug/videos - Add video (using same upload middleware, field name 'video')
 router.post(
     '/:slug/videos',
     auth,
@@ -132,18 +150,17 @@ router.post(
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            const videoUrl = req.file.path;
-            const publicId = req.file.filename;
-
+            const fileUrl = `/uploads/${req.file.filename}`;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
                 return res.status(404).json({ message: 'Section not found' });
             }
 
+            // Ensure videos array exists
             if (!section.videos) section.videos = [];
 
-            section.videos.push({ url: videoUrl, publicId: publicId });
+            section.videos.push(fileUrl);
             await section.save();
 
             req.io.emit('gallery-updated');
@@ -157,33 +174,26 @@ router.post(
 
 // DELETE /api/gallery/:slug/images - Remove image
 router.delete('/:slug/images', auth, async (req, res) => {
-    const { publicId, imageUrl } = req.body;
+    const { imageUrl } = req.body;
     try {
         const section = await GallerySection.findOne({ slug: req.params.slug });
         if (!section) {
             return res.status(404).json({ message: 'Section not found' });
         }
 
-        if (publicId) {
-            await cloudinary.uploader.destroy(publicId);
-            section.images = section.images.filter((img) => img.publicId !== publicId);
-        } else if (imageUrl) {
-            section.images = section.images.filter((img) => typeof img === 'string' ? img !== imageUrl : img.url !== imageUrl);
-        }
-        
+        section.images = section.images.filter((img) => img !== imageUrl);
         await section.save();
 
         req.io.emit('gallery-updated');
         res.json(section);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
 // DELETE /api/gallery/:slug/videos - Remove video
 router.delete('/:slug/videos', auth, async (req, res) => {
-    const { publicId, videoUrl } = req.body;
+    const { videoUrl } = req.body;
     try {
         const section = await GallerySection.findOne({ slug: req.params.slug });
         if (!section) {
@@ -191,19 +201,13 @@ router.delete('/:slug/videos', auth, async (req, res) => {
         }
 
         if (section.videos) {
-            if (publicId) {
-                await cloudinary.uploader.destroy(publicId, { resource_type: 'video' });
-                section.videos = section.videos.filter((vid) => vid.publicId !== publicId);
-            } else if (videoUrl) {
-                section.videos = section.videos.filter((vid) => typeof vid === 'string' ? vid !== videoUrl : vid.url !== videoUrl);
-            }
+            section.videos = section.videos.filter((vid) => vid !== videoUrl);
             await section.save();
         }
 
         req.io.emit('gallery-updated');
         res.json(section);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 });

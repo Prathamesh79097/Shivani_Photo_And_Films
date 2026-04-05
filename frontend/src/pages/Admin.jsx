@@ -721,21 +721,17 @@ const Admin = () => {
                     <div className="mb-4">
                       <h5 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Images</h5>
                       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                        {section.images.map((imgObj, idx) => {
-                          const isStr = typeof imgObj === 'string';
-                          const imgUrl = isStr ? imgObj : imgObj.url;
-                          const publicId = isStr ? null : imgObj.publicId;
-                          return (
+                        {section.images.map((img, idx) => (
                           <div key={idx} className="relative group aspect-square rounded overflow-hidden border border-white/10">
                             <img
-                              src={imgUrl.startsWith('/uploads/') ? `${API_BASE}${imgUrl}` : imgUrl}
+                              src={img.startsWith('/uploads/') ? `${API_BASE}${img}` : img}
                               alt="Gallery"
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                               <button
-                                onClick={() => handleDeleteImage(section.slug, publicId, imgUrl)}
+                                onClick={() => handleDeleteImage(section.slug, img)}
                                 className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                                 title="Delete Image"
                               >
@@ -743,7 +739,7 @@ const Admin = () => {
                               </button>
                             </div>
                           </div>
-                        )})}
+                        ))}
                       </div>
                     </div>
                   )}
@@ -753,20 +749,16 @@ const Admin = () => {
                     <div>
                       <h5 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Videos</h5>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {section.videos.map((vidObj, idx) => {
-                          const isStr = typeof vidObj === 'string';
-                          const vidUrl = isStr ? vidObj : vidObj.url;
-                          const publicId = isStr ? null : vidObj.publicId;
-                          return (
+                        {section.videos.map((vid, idx) => (
                           <div key={idx} className="relative group aspect-video rounded overflow-hidden border border-white/10 bg-black">
                             <video
-                              src={vidUrl.startsWith('/uploads/') ? `${API_BASE}${vidUrl}` : vidUrl}
+                              src={vid.startsWith('/uploads/') ? `${API_BASE}${vid}` : vid}
                               className="w-full h-full object-cover"
                               controls
                             />
                             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
-                                onClick={() => handleDeleteVideo(section.slug, publicId, vidUrl)}
+                                onClick={() => handleDeleteVideo(section.slug, vid)}
                                 className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
                                 title="Delete Video"
                               >
@@ -774,7 +766,7 @@ const Admin = () => {
                               </button>
                             </div>
                           </div>
-                        )})}
+                        ))}
                       </div>
                     </div>
                   )}
