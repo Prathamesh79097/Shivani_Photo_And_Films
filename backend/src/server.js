@@ -11,17 +11,36 @@ const app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 
+const allowedOrigins = [
+  'https://shivaniphotoandfilms.vercel.app',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-  origin: true, // Allow any frontend Vercel URL dynamically
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: true,
-    methods: ["GET", "POST"],
+    origin: function(origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
@@ -43,19 +62,15 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-const path = require('path');
-
 app.use('/api/auth', authRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/services', require('./routes/services'));
 app.use('/api/gallery', require('./routes/gallery'));
 
-// Static file serving removed as it operates purely as an API
-
-// Handle client-side routing
-app.get([/(.*)/], (_req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
+// Root path health check indicating the API is live
+app.get('/', (req, res) => {
+  res.json({ status: "Live", message: "Shivani Photo & Films API is running" });
 });
 
 const PORT = process.env.PORT || 5000;
@@ -65,4 +80,3 @@ connectDB();
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
