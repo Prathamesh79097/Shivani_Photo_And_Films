@@ -15,20 +15,6 @@ const GalleryCard = ({ item, index }) => {
     return 'animate-slide-right';
   };
 
-  const getImageUrl = (item) => {
-    if (['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(item.slug) || item.title.toLowerCase().includes('cinematic')) {
-      return '/cinematic_cover.jpeg';
-    }
-    
-    let img = item.coverImage;
-    if (!img && item.images && item.images.length > 0) {
-      img = typeof item.images[0] === 'string' ? item.images[0] : item.images[0].url;
-    }
-    if (!img) return '/hero-camera.jpg';
-    
-    return img.startsWith('/uploads/') ? `${API_BASE}${img}` : img;
-  };
-
   return (
     <div
       ref={cardRef}
@@ -43,7 +29,13 @@ const GalleryCard = ({ item, index }) => {
       <div className="relative z-10 h-full flex flex-col">
         <div className="h-52 overflow-hidden border-b border-amber-500/10">
           <img
-            src={getImageUrl(item)}
+            src={
+              ['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(item.slug) || item.title.toLowerCase().includes('cinematic')
+                ? '/cinematic_cover.jpeg'
+                : (item.coverImage || item.image)?.startsWith('/uploads/')
+                  ? `${API_BASE}${item.coverImage || item.image}`
+                  : item.coverImage || item.image
+            }
             alt={item.title}
             className="w-full h-full object-cover"
             onError={(e) => (e.target.src = '/hero-camera.jpg')}

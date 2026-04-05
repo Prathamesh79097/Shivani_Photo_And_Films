@@ -4,22 +4,17 @@ const multer = require('multer');
 
 // Links to the keys we will hide in the .env file
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_KEY_NAME,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: async (req, file) => {
-        return {
-            folder: 'shivani_gallery',
-            asset_folder: 'shivani_gallery',
-            use_asset_folder_as_public_id_prefix: true,
-            allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mov'],
-            resource_type: 'auto',
-            display_name: file.originalname,
-        };
+    params: {
+        folder: 'shivani_gallery',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mov'],
+        resource_type: 'auto', // Detects if it's a photo or a reel
     },
 });
 

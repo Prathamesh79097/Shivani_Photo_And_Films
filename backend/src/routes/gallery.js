@@ -38,14 +38,10 @@ router.post('/', auth, upload.single('coverImage'), async (req, res) => {
 
         const slug = createSlug(title);
 
+        // Check if slug exists
         const existing = await GallerySection.findOne({ slug });
         if (existing) {
             return res.status(400).json({ message: 'Section with this title already exists' });
-        }
-
-        if (req.file) {
-            console.log('--- Cloudinary Cover Image Upload Payload ---');
-            console.log(req.file);
         }
 
         const newSection = new GallerySection({
@@ -104,9 +100,6 @@ router.post(
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            console.log('--- Cloudinary Image Upload Payload ---');
-            console.log(req.file);
-
             const imageUrl = req.file.path;
             const publicId = req.file.filename;
 
@@ -138,9 +131,6 @@ router.post(
             if (!req.file) {
                 return res.status(400).json({ message: 'No file uploaded' });
             }
-
-            console.log('--- Cloudinary Video Upload Payload ---');
-            console.log(req.file);
 
             const videoUrl = req.file.path;
             const publicId = req.file.filename;
