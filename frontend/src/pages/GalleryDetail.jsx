@@ -80,7 +80,10 @@ const GalleryDetail = () => {
 
             {section.images && section.images.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 max-w-4xl mx-auto">
-                    {section.images.map((img, index) => (
+                    {section.images.map((img, index) => {
+                        const isStr = typeof img === 'string';
+                        const imgUrl = isStr ? img : img.url;
+                        return (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -88,36 +91,39 @@ const GalleryDetail = () => {
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.6, delay: index * 0.05 }}
                             className="group relative aspect-[4/5] overflow-hidden rounded-sm glass-panel shadow-lg cursor-pointer"
-                            onClick={() => setSelectedImage(img)}
+                            onClick={() => setSelectedImage(imgUrl)}
                         >
                             <img
-                                src={img.startsWith('/uploads/') ? `${API_BASE}${img}` : img}
+                                src={imgUrl.startsWith('/uploads/') ? `${API_BASE}${imgUrl}` : imgUrl}
                                 alt={`${section.title} ${index + 1}`}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </motion.div>
-                    ))}
+                    )})}
                 </div>
             ) : null}
 
             {/* Videos Section */}
             {(section.videos && section.videos.length > 0) ? (
                 <div className="flex flex-col gap-12 mt-12 w-full max-w-4xl mx-auto">
-                    {section.videos.map((video, index) => (
+                    {section.videos.map((video, index) => {
+                        const isStr = typeof video === 'string';
+                        const videoUrl = isStr ? video : video.url;
+                        return (
                         <div
                             key={index}
                             className="w-full aspect-video bg-black rounded-lg overflow-hidden border border-white/10 shadow-2xl relative"
                         >
                             <video
-                                src={video.startsWith('/uploads/') ? `${API_BASE}${video}` : video}
+                                src={videoUrl.startsWith('/uploads/') ? `${API_BASE}${videoUrl}` : videoUrl}
                                 className="w-full h-full object-contain"
                                 controls
                                 preload="metadata"
                             />
                         </div>
-                    ))}
+                    )})}
                 </div>
             ) : (['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(slug)) ? (
                 <div className="mt-12 w-full mx-auto">

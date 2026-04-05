@@ -244,7 +244,7 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteImage = async (slug, imageUrl) => {
+  const handleDeleteImage = async (slug, publicId, imageUrl) => {
     if (!token) return;
     if (!confirm('Are you sure you want to delete this image?')) return;
     try {
@@ -254,7 +254,7 @@ const Admin = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ imageUrl }),
+        body: JSON.stringify({ publicId, imageUrl }),
       });
       if (res.ok) fetchAdminData(token);
     } catch (err) {
@@ -262,7 +262,7 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteVideo = async (slug, videoUrl) => {
+  const handleDeleteVideo = async (slug, publicId, videoUrl) => {
     if (!token) return;
     if (!confirm('Are you sure you want to delete this video?')) return;
     try {
@@ -272,7 +272,7 @@ const Admin = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ videoUrl }),
+        body: JSON.stringify({ publicId, videoUrl }),
       });
       if (res.ok) fetchAdminData(token);
     } catch (err) {
@@ -669,7 +669,7 @@ const Admin = () => {
                         disabled={!selectedSection || !uploadFile || loading.upload}
                         className="bg-green-600/80 text-white px-4 py-2 rounded-lg hover:bg-green-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm"
                       >
-                        <FaImage className="inline mr-1" /> Upload
+                        {loading.upload ? 'Uploading to Cloud...' : <><FaImage className="inline mr-1" /> Upload</>}
                       </button>
                     </div>
                   </div>
@@ -690,7 +690,7 @@ const Admin = () => {
                       disabled={!selectedSection || !uploadVideo || loading.upload}
                       className="bg-blue-600/80 text-white px-4 py-2 rounded-lg hover:bg-blue-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm"
                     >
-                      <FaVideo className="inline mr-1" /> Upload
+                      {loading.upload ? 'Uploading to Cloud...' : <><FaVideo className="inline mr-1" /> Upload</>}
                     </button>
                   </div>
                 </div>
@@ -721,17 +721,21 @@ const Admin = () => {
                     <div className="mb-4">
                       <h5 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Images</h5>
                       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                        {section.images.map((img, idx) => (
+                        {section.images.map((imgObj, idx) => {
+                          const isStr = typeof imgObj === 'string';
+                          const imgUrl = isStr ? imgObj : imgObj.url;
+                          const publicId = isStr ? null : imgObj.publicId;
+                          return (
                           <div key={idx} className="relative group aspect-square rounded overflow-hidden border border-white/10">
                             <img
-                              src={img.startsWith('/uploads/') ? `${API_BASE}${img}` : img}
+                              src={imgUrl.startsWith('/uploads/') ? `${API_BASE}${imgUrl}` : imgUrl}
                               alt="Gallery"
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                               <button
-                                onClick={() => handleDeleteImage(section.slug, img)}
+                                onClick={() => handleDeleteImage(section.slug, publicId, imgUrl)}
                                 className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                                 title="Delete Image"
                               >
@@ -739,7 +743,7 @@ const Admin = () => {
                               </button>
                             </div>
                           </div>
-                        ))}
+                        )})}
                       </div>
                     </div>
                   )}
@@ -749,16 +753,20 @@ const Admin = () => {
                     <div>
                       <h5 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Videos</h5>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {section.videos.map((vid, idx) => (
+                        {section.videos.map((vidObj, idx) => {
+                          const isStr = typeof vidObj === 'string';
+                          const vidUrl = isStr ? vidObj : vidObj.url;
+                          const publicId = isStr ? null : vidObj.publicId;
+                          return (
                           <div key={idx} className="relative group aspect-video rounded overflow-hidden border border-white/10 bg-black">
                             <video
-                              src={vid.startsWith('/uploads/') ? `${API_BASE}${vid}` : vid}
+                              src={vidUrl.startsWith('/uploads/') ? `${API_BASE}${vidUrl}` : vidUrl}
                               className="w-full h-full object-cover"
                               controls
                             />
                             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
-                                onClick={() => handleDeleteVideo(section.slug, vid)}
+                                onClick={() => handleDeleteVideo(section.slug, publicId, vidUrl)}
                                 className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
                                 title="Delete Video"
                               >
@@ -766,7 +774,7 @@ const Admin = () => {
                               </button>
                             </div>
                           </div>
-                        ))}
+                        )})}
                       </div>
                     </div>
                   )}
