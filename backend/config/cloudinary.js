@@ -11,10 +11,15 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'shivani_gallery',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mov'],
-        resource_type: 'auto', // Detects if it's a photo or a reel
+    params: async (req, file) => {
+        return {
+            folder: 'shivani_gallery',
+            asset_folder: 'shivani_gallery',
+            use_asset_folder_as_public_id_prefix: true,
+            allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mov'],
+            resource_type: 'auto',
+            display_name: file.originalname,
+        };
     },
 });
 
