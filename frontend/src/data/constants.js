@@ -8,10 +8,10 @@ export const gallerySections = [
       '/weddis.jpeg',
     coverImage: '/weddis.jpeg',
     images: [
-      '/19759466-ff37-4f16-81f6-1aab9cdbac4e.jpg',
-      '/p1.jpg',
-      '/wed4.jpeg',
       '/wedding1.jpeg',
+      '/wed4.jpeg',
+      '/19759466-ff37-4f16-81f6-1aab9cdbac4e.jpg',
+      '/953d842d-4fb1-4f1a-aa32-ef61410b7a55.jpg',
     ],
   },
   {

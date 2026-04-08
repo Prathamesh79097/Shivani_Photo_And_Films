@@ -80,7 +80,9 @@ const GalleryDetail = () => {
 
             {section.images && section.images.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 max-w-4xl mx-auto">
-                    {section.images.map((img, index) => (
+                    {section.images.map((imgObj, index) => {
+                        const img = typeof imgObj === 'string' ? imgObj : imgObj.url;
+                        return (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -91,33 +93,35 @@ const GalleryDetail = () => {
                             onClick={() => setSelectedImage(img)}
                         >
                             <img
-                                src={img.startsWith('/uploads/') ? `${API_BASE}${img}` : img}
+                                src={img?.startsWith('/uploads/') ? `${API_BASE}${img}` : img}
                                 alt={`${section.title} ${index + 1}`}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </motion.div>
-                    ))}
+                    )})}
                 </div>
             ) : null}
 
             {/* Videos Section */}
             {(section.videos && section.videos.length > 0) ? (
                 <div className="flex flex-col gap-12 mt-12 w-full max-w-4xl mx-auto">
-                    {section.videos.map((video, index) => (
+                    {section.videos.map((videoObj, index) => {
+                        const video = typeof videoObj === 'string' ? videoObj : videoObj.url;
+                        return (
                         <div
                             key={index}
                             className="w-full aspect-video bg-black rounded-lg overflow-hidden border border-white/10 shadow-2xl relative"
                         >
                             <video
-                                src={video.startsWith('/uploads/') ? `${API_BASE}${video}` : video}
+                                src={video?.startsWith('/uploads/') ? `${API_BASE}${video}` : video}
                                 className="w-full h-full object-contain"
                                 controls
                                 preload="metadata"
                             />
                         </div>
-                    ))}
+                    )})}
                 </div>
             ) : (['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(slug)) ? (
                 <div className="mt-12 w-full mx-auto">

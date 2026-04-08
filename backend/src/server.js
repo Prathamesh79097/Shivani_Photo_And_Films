@@ -51,17 +51,7 @@ app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/services', require('./routes/services'));
 app.use('/api/gallery', require('./routes/gallery'));
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Serve static files from the frontend
-app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-
-// Handle client-side routing
-app.get([/(.*)/], (_req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
-});
-
+// Backend is set up as a pure API.
 const PORT = process.env.PORT || 5000;
 
 connectDB();

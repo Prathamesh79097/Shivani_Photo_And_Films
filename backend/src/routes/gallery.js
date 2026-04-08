@@ -6,36 +6,7 @@ const fs = require('fs');
 const GallerySection = require('../models/GallerySection');
 const auth = require('../middleware/auth');
 
-// Configure Multer for file upload
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadPath = path.join(__dirname, '../../uploads');
-        // Ensure directory exists
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-        // secure unique filename
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, 'file-' + uniqueSuffix + path.extname(file.originalname));
-    },
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
-    fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp|mp4|webm|ogg/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb(new Error('Only images and videos are allowed'));
-    },
-});
+const upload = require('../../config/cloudinary');
 
 // Helper to create slug
 const createSlug = (text) => {
@@ -80,7 +51,7 @@ router.post('/', auth, upload.single('coverImage'), async (req, res) => {
             title,
             description,
             slug,
-            coverImage: req.file ? `/uploads/${req.file.filename}` : undefined,
+            coverImage: req.file ? req.file.path : undefined,
             images: [],
             videos: []
         });
@@ -120,14 +91,15 @@ router.post(
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            const fileUrl = `/uploads/${req.file.filename}`;
+            const fileUrl = req.file.path;
+            const publicId = req.file.filename;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
                 return res.status(404).json({ message: 'Section not found' });
             }
 
-            section.images.push(fileUrl);
+            section.images.push({ url: fileUrl, publicId });
             await section.save();
 
             req.io.emit('gallery-updated');
@@ -150,7 +122,8 @@ router.post(
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            const fileUrl = `/uploads/${req.file.filename}`;
+            const fileUrl = req.file.path;
+            const publicId = req.file.filename;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
@@ -160,7 +133,7 @@ router.post(
             // Ensure videos array exists
             if (!section.videos) section.videos = [];
 
-            section.videos.push(fileUrl);
+            section.videos.push({ url: fileUrl, publicId });
             await section.save();
 
             req.io.emit('gallery-updated');
@@ -181,7 +154,10 @@ router.delete('/:slug/images', auth, async (req, res) => {
             return res.status(404).json({ message: 'Section not found' });
         }
 
-        section.images = section.images.filter((img) => img !== imageUrl);
+        section.images = section.images.filter((img) => {
+            if (typeof img === 'string') return img !== imageUrl;
+            return img.url !== imageUrl;
+        });
         await section.save();
 
         req.io.emit('gallery-updated');
@@ -201,7 +177,10 @@ router.delete('/:slug/videos', auth, async (req, res) => {
         }
 
         if (section.videos) {
-            section.videos = section.videos.filter((vid) => vid !== videoUrl);
+            section.videos = section.videos.filter((vid) => {
+                if (typeof vid === 'string') return vid !== videoUrl;
+                return vid.url !== videoUrl;
+            });
             await section.save();
         }
 
@@ -234,3 +213,5 @@ router.post('/seed', auth, async (req, res) => {
 });
 
 module.exports = router;
+
+
