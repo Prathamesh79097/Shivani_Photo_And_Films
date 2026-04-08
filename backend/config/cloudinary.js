@@ -11,13 +11,27 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'shivani_gallery',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mov'],
-        resource_type: 'auto', // Detects if it's a photo or a reel
+    params: async (req, file) => {
+        let resource_type = 'auto';
+        if (file.mimetype.includes('video')) {
+            resource_type = 'video';
+        } else if (file.mimetype.includes('image')) {
+            resource_type = 'image';
+        }
+
+        return {
+            folder: 'shivani_gallery',
+            resource_type: resource_type,
+            chunk_size: 6000000, // 6 MB chunk size to support large mobile video uploads smoothly
+        };
     },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 100 * 1024 * 1024 // Set max upload to 100MB max per file limit just in case
+    }
+});
 
 module.exports = upload;
