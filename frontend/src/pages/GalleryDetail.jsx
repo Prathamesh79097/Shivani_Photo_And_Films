@@ -118,6 +118,8 @@ const GalleryDetail = () => {
                                 src={video?.startsWith('/uploads/') ? `${API_BASE}${video}` : video}
                                 className="w-full h-full object-contain"
                                 controls
+                                controlsList="nodownload"
+                                onContextMenu={(e) => e.preventDefault()}
                                 preload="metadata"
                             />
                         </div>

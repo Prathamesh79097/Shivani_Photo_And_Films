@@ -759,6 +759,8 @@ const Admin = () => {
                               src={vid?.startsWith('/uploads/') ? `${API_BASE}${vid}` : vid}
                               className="w-full h-full object-cover"
                               controls
+                              controlsList="nodownload"
+                              onContextMenu={(e) => e.preventDefault()}
                             />
                             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
