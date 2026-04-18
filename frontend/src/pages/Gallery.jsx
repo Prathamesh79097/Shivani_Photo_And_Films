@@ -17,10 +17,12 @@ const GalleryCard = ({ item, index }) => {
 
   return (
     <div
-      className={`group h-full flex flex-col rounded-2xl border-2 border-amber-500/30 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(251,191,36,0.6),inset_0_0_10px_rgba(251,191,36,0.2)] active:shadow-[0_0_25px_rgba(251,191,36,0.6),inset_0_0_10px_rgba(251,191,36,0.2)] opacity-100 animate-fade-in`}
+      ref={cardRef}
+      className={`group h-full flex flex-col rounded-2xl border-2 border-amber-500/30 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(251,191,36,0.6),inset_0_0_10px_rgba(251,191,36,0.2)] active:shadow-[0_0_25px_rgba(251,191,36,0.6),inset_0_0_10px_rgba(251,191,36,0.2)] ${isVisible ? getAnimationClass(index) : 'opacity-0'
+        }`}
       style={{
         backgroundColor: 'rgba(203, 203, 212, 0.08)',
-        animationDelay: `${(index % 3) * 0.15}s`
+        animationDelay: isVisible ? `${(index % 3) * 0.15}s` : '0s'
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
