@@ -31,7 +31,7 @@ const Home = () => {
 
   return (
     <>
-      <section className="hero-frame border border-white/5 rounded-3xl p-3 md:p-12 bg-slate-900/60 shadow-glow mt-8">
+      <section className="hero-frame border border-white/5 rounded-3xl p-6 md:p-16 bg-slate-900/60 shadow-glow mt-8 overflow-hidden">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 text-amber-200 bg-amber-500/10 border border-amber-200/20 px-3 py-1 rounded-full text-sm">
@@ -70,7 +70,7 @@ const Home = () => {
               <img
                 src={heroImage}
                 alt="Professional photography - hands holding camera"
-                className="w-full h-auto object-contain md:h-[420px] md:object-cover zoom-animation"
+                className="w-full h-full aspect-[4/3] md:aspect-auto object-cover md:h-[480px] zoom-animation"
               />
             </div>
             <div className="glass-panel p-4 mt-4 inline-block">
@@ -85,8 +85,8 @@ const Home = () => {
       <InteractiveDivider />
 
       {/* Story Section */}
-      <section ref={storyRef} className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-16 overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+      <section ref={storyRef} className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-24 overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Headline with Background */}
           <div
             className={`relative p-10 md:p-16 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[50vh] md:min-h-[70vh] ${isStoryVisible ? 'animate-slide-left' : 'opacity-0'}`}
@@ -129,8 +129,8 @@ const Home = () => {
       <InteractiveDivider />
 
       {/* Philosophy/Goal Section */}
-      <section ref={philosophyRef} className="max-w-7xl mx-auto px-4 md:px-8 pb-16 overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+      <section ref={philosophyRef} className="max-w-7xl mx-auto px-6 md:px-12 pb-24 overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Text */}
           <div className={`space-y-12 text-left ${isPhilosophyVisible ? 'animate-slide-left' : 'opacity-0'}`}>
             <div className="space-y-2">
@@ -173,8 +173,8 @@ const Home = () => {
       <InteractiveDivider />
 
       {/* New 5th Section (Duplicate of Story/3rd Section) */}
-      <section ref={closingRef} className="max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-20 md:pb-32 overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+      <section ref={closingRef} className="max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-24 md:pb-40 overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Headline with Background */}
           <div
             className={`relative p-10 md:p-16 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[50vh] md:min-h-[70vh] ${isClosingVisible ? 'animate-slide-left' : 'opacity-0'}`}
@@ -217,8 +217,8 @@ const Home = () => {
       <InteractiveDivider />
 
       {/* New Section (Duplicate of Philosophy/2nd Section) */}
-      <section ref={newSectionRef} className="max-w-7xl mx-auto px-4 md:px-8 pb-16 overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+      <section ref={newSectionRef} className="max-w-7xl mx-auto px-6 md:px-12 pb-24 overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Text */}
           <div className={`space-y-12 text-left ${isNewSectionVisible ? 'animate-slide-left' : 'opacity-0'}`}>
             <div className="space-y-2">
@@ -260,7 +260,7 @@ const Home = () => {
       <InteractiveDivider />
 
       <section
-        className="relative w-screen left-1/2 -translate-x-1/2 mt-8 py-8 md:py-32 px-4 md:px-8 overflow-hidden flex flex-col items-center justify-center min-h-[30vh] md:min-h-[75vh] gap-4 md:gap-8 bg-black"
+        className="relative w-screen left-1/2 -translate-x-1/2 mt-8 py-12 md:py-32 px-6 md:px-12 overflow-hidden flex flex-col items-center justify-center min-h-[40vh] md:min-h-[75vh] gap-8 md:gap-12 bg-black"
       >
         {/* Slideshow Background */}
         <div className="absolute inset-0 z-0">
