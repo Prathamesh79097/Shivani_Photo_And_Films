@@ -31,9 +31,9 @@ const Home = () => {
 
   return (
     <>
-      <section className="hero-frame border border-white/5 rounded-3xl p-6 md:p-16 bg-slate-900/60 shadow-glow mt-8 overflow-hidden">
+      <section className="hero-frame border-y md:border border-white/5 md:rounded-3xl p-0 md:p-16 bg-slate-900/60 shadow-glow mt-8 overflow-hidden">
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div className="space-y-6">
+          <div className="space-y-6 px-6 py-12 md:p-0">
             <p className="inline-flex items-center gap-2 text-amber-200 bg-amber-500/10 border border-amber-200/20 px-3 py-1 rounded-full text-sm">
               Crafted visuals for weddings, films, and brands
             </p>
@@ -66,7 +66,7 @@ const Home = () => {
 
           <div className="relative">
             <div className="absolute inset-0 blur-3xl bg-amber-300/10 rotate-6" />
-            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+            <div className="relative md:rounded-2xl overflow-hidden border-y md:border border-white/10 shadow-2xl">
               <img
                 src={heroImage}
                 alt="Professional photography - hands holding camera"
@@ -89,7 +89,7 @@ const Home = () => {
         <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Headline with Background */}
           <div
-            className={`relative p-10 md:p-16 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[50vh] md:min-h-[70vh] ${isStoryVisible ? 'animate-slide-left' : 'opacity-0'}`}
+            className={`relative p-8 md:p-12 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[300px] md:min-h-[450px] ${isStoryVisible ? 'animate-slide-left' : 'opacity-0'}`}
             style={{
               backgroundImage: "url('/c132c5a0-cc14-4002-85b1-be1a049a16f7.jpg')",
               backgroundSize: 'cover',
@@ -153,7 +153,7 @@ const Home = () => {
 
           {/* Right Column - Image */}
           <div
-            className={`relative rounded-3xl overflow-hidden shadow-2xl min-h-[50vh] md:min-h-[70vh] flex flex-col justify-center items-center text-center p-8 ${isPhilosophyVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}
+            className={`relative rounded-3xl overflow-hidden shadow-2xl min-h-[300px] md:min-h-[450px] flex flex-col justify-center items-center text-center p-6 ${isPhilosophyVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}
             style={{
               backgroundImage: "url('/birthday3.jpeg')",
               backgroundSize: 'cover',
@@ -177,7 +177,7 @@ const Home = () => {
         <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           {/* Left Column - Headline with Background */}
           <div
-            className={`relative p-10 md:p-16 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[50vh] md:min-h-[70vh] ${isClosingVisible ? 'animate-slide-left' : 'opacity-0'}`}
+            className={`relative p-8 md:p-12 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-center items-center min-h-[300px] md:min-h-[450px] ${isClosingVisible ? 'animate-slide-left' : 'opacity-0'}`}
             style={{
               backgroundImage: "url('/proddis.jpeg')",
               backgroundSize: 'cover',
@@ -240,7 +240,7 @@ const Home = () => {
 
           {/* Right Column - Image */}
           <div
-            className={`relative rounded-3xl overflow-hidden shadow-2xl min-h-[50vh] md:min-h-[70vh] flex flex-col justify-center items-center text-center p-8 ${isNewSectionVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}
+            className={`relative rounded-3xl overflow-hidden shadow-2xl min-h-[300px] md:min-h-[450px] flex flex-col justify-center items-center text-center p-6 ${isNewSectionVisible ? 'animate-slide-right delay-2' : 'opacity-0'}`}
             style={{
               backgroundImage: "url('/port4.jpeg')",
               backgroundSize: 'cover',
