@@ -103,7 +103,7 @@ const Gallery = () => {
 
   return (
     <section>
-      <div className="relative w-[100vw] left-1/2 -translate-x-1/2 py-20 md:py-32 mb-12 overflow-hidden bg-black">
+      <div className="relative w-screen left-1/2 -translate-x-1/2 py-20 md:py-32 mb-12 overflow-hidden bg-black">
         {/* Slideshow Background */}
         <div className="absolute inset-0 z-0">
           {[
