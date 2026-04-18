@@ -16,7 +16,7 @@ const CinematicPlayer = ({ items }) => {
     const durationInFrames = 30 * 5 * slideshowItems.length; // 5s per slide, 30fps
 
     return (
-        <div className="w-full relative rounded-2xl overflow-hidden glass-panel shadow-2xl border border-white/10 group">
+        <div className="w-full relative rounded-none md:rounded-2xl overflow-hidden glass-panel shadow-2xl border border-white/10 group">
             {/* Player Wrapper */}
             <div className="aspect-video w-full relative">
                 <Player

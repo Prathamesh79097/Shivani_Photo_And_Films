@@ -243,7 +243,7 @@ const GalleryDetail = () => {
                     )})}
                 </div>
             ) : (['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(slug)) ? (
-                <div className="mt-12 w-full mx-auto">
+                <div className="mt-12 w-screen relative left-1/2 -translate-x-1/2 md:w-full md:left-auto md:translate-x-0 mx-auto">
                     <CinematicPlayer />
                 </div>
             ) : null}

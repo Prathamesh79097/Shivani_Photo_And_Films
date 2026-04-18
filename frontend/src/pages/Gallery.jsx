@@ -103,7 +103,7 @@ const Gallery = () => {
 
   return (
     <section>
-      <div className="relative w-[100vw] left-1/2 -translate-x-1/2 py-20 md:py-32 mb-12 overflow-hidden bg-black max-w-[100%] lg:max-w-none">
+      <div className="relative w-[100vw] left-1/2 -translate-x-1/2 py-20 md:py-32 mb-12 overflow-hidden bg-black lg:max-w-none">
         {/* Slideshow Background */}
         <div className="absolute inset-0 z-0">
           {[
@@ -127,13 +127,13 @@ const Gallery = () => {
 
         {/* Left Blur - Increased z-index to sit on top of bg overlay but below text */}
         <div
-          className="absolute inset-y-0 left-0 w-1/4 backdrop-blur-xl z-10"
+          className="absolute inset-y-0 left-0 w-1/4 backdrop-blur-xl z-10 hidden md:block"
           style={{ maskImage: 'linear-gradient(to right, black, transparent)', WebkitMaskImage: 'linear-gradient(to right, black, transparent)' }}
         />
 
         {/* Right Blur */}
         <div
-          className="absolute inset-y-0 right-0 w-1/4 backdrop-blur-xl z-10"
+          className="absolute inset-y-0 right-0 w-1/4 backdrop-blur-xl z-10 hidden md:block"
           style={{ maskImage: 'linear-gradient(to left, black, transparent)', WebkitMaskImage: 'linear-gradient(to left, black, transparent)' }}
         />
 
