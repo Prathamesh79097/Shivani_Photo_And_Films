@@ -63,22 +63,25 @@ const Footer = () => {
             href={`https://wa.me/${contactDetails.whatsapp}`}
             target="_blank"
             rel="noreferrer"
-            className="block px-4 py-3 rounded-lg border-2 border-white/10 text-center text-slate-100 hover:border-amber-200/60 transition-all"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-white/10 text-slate-100 hover:border-amber-200/60 transition-all"
           >
+            <FaWhatsapp size={24} color="#25D366" />
             WhatsApp Direct
           </a>
           <a
             href={contactDetails.instagram}
             target="_blank"
             rel="noreferrer"
-            className="block px-4 py-3 rounded-lg border-2 border-white/10 text-center text-slate-100 hover:border-amber-200/60 transition-all"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-white/10 text-slate-100 hover:border-amber-200/60 transition-all"
           >
+            <FaInstagram size={24} color="#E4405F" />
             Instagram Profile
           </a>
           <a
             href={`mailto:${contactDetails.email}`}
-            className="block px-4 py-3 rounded-lg border-2 border-white/10 text-center text-slate-100 hover:border-amber-200/60 transition-all"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-white/10 text-slate-100 hover:border-amber-200/60 transition-all"
           >
+            <MdEmail size={24} color="#EA4335" />
             Email the Studio
           </a>
         </div>
