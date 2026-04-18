@@ -5,12 +5,121 @@ import { API_BASE, gallerySections as defaultGallerySections } from '../data/con
 import SectionHeader from '../components/SectionHeader';
 import CinematicPlayer from '../components/CinematicPlayer';
 
+import { useRef } from 'react';
 import { socket } from '../socket';
+
+const AutoPlayVideo = ({ src }) => {
+    const videoRef = useRef(null);
+    const [isHovered, setIsHovered] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    videoRef.current.muted = false;
+                    videoRef.current.play().catch(err => {
+                        console.warn("Autoplay with sound blocked, trying muted:", err);
+                        videoRef.current.muted = true;
+                        videoRef.current.play();
+                    });
+                } else {
+                    videoRef.current.pause();
+                }
+            },
+            { threshold: 0.6 }
+        );
+
+        if (videoRef.current) {
+            observer.observe(videoRef.current);
+        }
+
+        return () => {
+            if (videoRef.current) {
+                observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
+
+    const togglePlay = (e) => {
+        e.stopPropagation();
+        if (videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play();
+            } else {
+                videoRef.current.pause();
+            }
+        }
+    };
+
+    const handleFullscreen = (e) => {
+        e.stopPropagation();
+        if (videoRef.current) {
+            if (videoRef.current.requestFullscreen) {
+                videoRef.current.requestFullscreen();
+            } else if (videoRef.current.webkitRequestFullscreen) {
+                videoRef.current.webkitRequestFullscreen();
+            } else if (videoRef.current.msRequestFullscreen) {
+                videoRef.current.msRequestFullscreen();
+            }
+        }
+    };
+
+    return (
+        <div 
+            className="relative w-full h-full group"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+        >
+            <video
+                ref={videoRef}
+                src={src}
+                className="w-full h-full object-contain cursor-pointer"
+                onClick={togglePlay}
+                loop
+                playsInline
+                preload="metadata"
+                controlsList="nodownload"
+                onContextMenu={(e) => e.preventDefault()}
+            />
+            
+            <AnimatePresence>
+                {isHovered && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        onClick={handleFullscreen}
+                        className="absolute top-4 right-4 z-30 p-2 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-amber-500 transition-colors"
+                        aria-label="Fullscreen"
+                    >
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            width="20" 
+                            height="20" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                        >
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <polyline points="9 21 3 21 3 15"></polyline>
+                            <line x1="21" y1="3" x2="14" y2="10"></line>
+                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                        </svg>
+                    </motion.button>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
 
 const GalleryDetail = () => {
     const { slug } = useParams();
-    const [section, setSection] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [section, setSection] = useState(() => defaultGallerySections.find((s) => s.slug === slug));
+    const [loading, setLoading] = useState(() => !defaultGallerySections.some((s) => s.slug === slug));
     const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
@@ -109,19 +218,27 @@ const GalleryDetail = () => {
                 <div className="flex flex-col gap-12 mt-12 w-full max-w-4xl mx-auto">
                     {section.videos.map((videoObj, index) => {
                         const video = typeof videoObj === 'string' ? videoObj : videoObj.url;
+                        const isCinematic = ['cinematic-shoots', 'films', 'reels', 'cinematic'].includes(slug) || 
+                                           section.title.toLowerCase().includes('cinematic');
+                        const videoUrl = video?.startsWith('/uploads/') ? `${API_BASE}${video}` : video;
+
                         return (
                         <div
                             key={index}
                             className="w-full aspect-video bg-black rounded-lg overflow-hidden border border-white/10 shadow-2xl relative"
                         >
-                            <video
-                                src={video?.startsWith('/uploads/') ? `${API_BASE}${video}` : video}
-                                className="w-full h-full object-contain"
-                                controls
-                                controlsList="nodownload"
-                                onContextMenu={(e) => e.preventDefault()}
-                                preload="metadata"
-                            />
+                            {isCinematic ? (
+                                <AutoPlayVideo src={videoUrl} />
+                            ) : (
+                                <video
+                                    src={videoUrl}
+                                    className="w-full h-full object-contain"
+                                    controls
+                                    controlsList="nodownload"
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    preload="metadata"
+                                />
+                            )}
                         </div>
                     )})}
                 </div>

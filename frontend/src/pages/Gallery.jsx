@@ -55,8 +55,8 @@ const GalleryCard = ({ item, index }) => {
 };
 
 const Gallery = () => {
-  const [gallerySections, setGallerySections] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [gallerySections, setGallerySections] = useState(defaultGallerySections);
+  const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {

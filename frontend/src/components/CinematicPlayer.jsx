@@ -32,7 +32,6 @@ const CinematicPlayer = ({ items }) => {
                     }}
                     autoPlay
                     loop
-                    controls // User asked for UI controls, Player has default ones, we can style container
                 />
             </div>
 
