@@ -31,9 +31,9 @@ const Home = () => {
 
   return (
     <>
-      <section className="hero-frame border-y md:border border-white/5 md:rounded-3xl p-0 md:p-16 bg-slate-900/60 shadow-glow mt-8 overflow-hidden">
+      <section className="hero-frame border border-white/5 rounded-3xl p-6 md:p-16 bg-slate-900/60 shadow-glow mt-8 overflow-hidden">
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div className="space-y-6 px-6 py-12 md:p-0">
+          <div className="space-y-6">
             <p className="inline-flex items-center gap-2 text-amber-200 bg-amber-500/10 border border-amber-200/20 px-3 py-1 rounded-full text-sm">
               Crafted visuals for weddings, films, and brands
             </p>
@@ -66,7 +66,7 @@ const Home = () => {
 
           <div className="relative">
             <div className="absolute inset-0 blur-3xl bg-amber-300/10 rotate-6" />
-            <div className="relative md:rounded-2xl overflow-hidden border-y md:border border-white/10 shadow-2xl">
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               <img
                 src={heroImage}
                 alt="Professional photography - hands holding camera"
