@@ -204,4 +204,4 @@ export const contactDetails = {
   timing: '10:00 AM to 08:00 PM',
 };
 
-export const API_BASE = import.meta.env.VITE_API_BASE || 'https://shivani-photo-and-films.onrender.com';
+export const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.shivaniphotoandfilms.xyz';

@@ -12,7 +12,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 app.use(cors({
-  origin: true, // Allow any frontend Vercel URL dynamically
+  origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz'],
   credentials: true
 }));
 app.use(express.json());
@@ -20,7 +20,7 @@ app.use(express.json());
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: true,
+    origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz'],
     methods: ["GET", "POST"],
     credentials: true
   }

@@ -6,7 +6,7 @@ const data = JSON.stringify({
 });
 
 const options = {
-  hostname: 'shivani-photo-and-films.onrender.com',
+  hostname: 'api.shivaniphotoandfilms.xyz',
   port: 443,
   path: '/api/auth/login',
   method: 'POST',
