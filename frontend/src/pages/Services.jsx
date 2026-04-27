@@ -51,7 +51,7 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const Services = () => {
-    const [services, setServices] = useState(initialPackages);
+    const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -59,16 +59,19 @@ const Services = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/services`);
+            // Using production URL as requested
+            const res = await fetch(`https://api.shivaniphotoandfilms.xyz/api/services`);
             if (res.ok) {
                 const data = await res.json();
-                if (data && data.length > 0) {
-                    setServices(data);
-                }
+                setServices(data || []);
+            } else {
+                throw new Error('Failed to fetch services');
             }
         } catch (err) {
             console.error('Failed to fetch services', err);
-            // We already have initialPackages as fallback in state
+            setError('Unable to load services. Please try again later.');
+            // Fallback to initial packages if everything fails
+            setServices(initialPackages);
         } finally {
             setLoading(false);
         }
@@ -101,11 +104,27 @@ const Services = () => {
                 </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-                {services.map((service, index) => (
-                    <ServiceCard key={service._id || service.name} service={service} index={index} />
-                ))}
-            </div>
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-24">
+                    <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            ) : error && services.length === 0 ? (
+                <div className="text-center py-20 glass-panel">
+                    <p className="text-red-400 mb-4">{error}</p>
+                    <button 
+                        onClick={fetchServices}
+                        className="px-6 py-2 rounded-full border border-amber-200/40 text-amber-100 hover:border-amber-200 transition"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-3 gap-6">
+                    {services.map((service, index) => (
+                        <ServiceCard key={service._id || service.name} service={service} index={index} />
+                    ))}
+                </div>
+            )}
         </section>
     );
 };
