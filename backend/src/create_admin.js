@@ -17,27 +17,28 @@ const createAdmin = async () => {
 
         // Delete old admin if exists
         await User.deleteOne({ username: 'admin' });
-        console.log('Removed old "admin" user if existed');
+        await User.deleteOne({ username: 'spf@12' });
+        console.log('Removed old admin users if existed');
 
-        const existingAdmin = await User.findOne({ username: 'spf@12' });
+        const existingAdmin = await User.findOne({ username: 'shivaniphotonfilms@12' });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash('Harsh@1205', salt);
 
         if (existingAdmin) {
-            console.log('User spf@12 already exists');
+            console.log('User shivaniphotonfilms@12 already exists');
             // Reset password
             existingAdmin.password = hashedPassword;
             await existingAdmin.save();
-            console.log('Password updated for spf@12');
+            console.log('Password updated for shivaniphotonfilms@12');
         } else {
-            console.log('Creating user spf@12...');
+            console.log('Creating user shivaniphotonfilms@12...');
             const admin = new User({
-                username: 'spf@12',
+                username: 'shivaniphotonfilms@12',
                 password: hashedPassword,
             });
             await admin.save();
-            console.log('User spf@12 created');
+            console.log('User shivaniphotonfilms@12 created');
         }
 
         process.exit();

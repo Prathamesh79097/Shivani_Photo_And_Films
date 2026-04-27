@@ -12,7 +12,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 app.use(cors({
-  origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz'],
+  origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz', 'http://localhost:5173'],
   credentials: true
 }));
 app.use(express.json());
@@ -20,7 +20,7 @@ app.use(express.json());
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz'],
+    origin: ['https://shivaniphotoandfilms.xyz', 'https://www.shivaniphotoandfilms.xyz', 'http://localhost:5173'],
     methods: ["GET", "POST"],
     credentials: true
   }

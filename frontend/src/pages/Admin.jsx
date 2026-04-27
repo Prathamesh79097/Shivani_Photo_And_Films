@@ -653,8 +653,7 @@ const Admin = () => {
               </select>
 
               <div className="flex flex-col md:flex-row gap-4 section-upload">
-                {selectedSection !== 'cinematic-films-reels' && (
-                  <div className="flex-1 flex flex-col gap-2">
+                <div className="flex-1 flex flex-col gap-2">
                     <label className="text-xs text-slate-400 uppercase tracking-widest font-semibold">Upload Image</label>
                     <div className="flex gap-2">
                       <input
@@ -673,7 +672,6 @@ const Admin = () => {
                       </button>
                     </div>
                   </div>
-                )}
 
                 <div className="flex-1 flex flex-col gap-2">
                   <label className="text-xs text-slate-400 uppercase tracking-widest font-semibold">Upload Video</label>
