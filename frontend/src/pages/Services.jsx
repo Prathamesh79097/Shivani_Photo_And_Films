@@ -51,7 +51,7 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const Services = () => {
-    const [services, setServices] = useState([]);
+    const [services, setServices] = useState(initialPackages);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -59,20 +59,16 @@ const Services = () => {
         setLoading(true);
         setError(null);
         try {
-            // Explicitly using production URL as requested, but keeping API_BASE for flexibility if preferred
-            // The user specifically mentioned https://api.shivaniphotoandfilms.xyz/api/services
             const res = await fetch(`${API_BASE}/api/services`);
             if (res.ok) {
                 const data = await res.json();
-                setServices(data || []);
-            } else {
-                throw new Error('Failed to fetch services');
+                if (data && data.length > 0) {
+                    setServices(data);
+                }
             }
         } catch (err) {
             console.error('Failed to fetch services', err);
-            setError('Unable to load services. Please try again later.');
-            // Fallback to initial packages if everything fails
-            setServices(initialPackages);
+            // We already have initialPackages as fallback in state
         } finally {
             setLoading(false);
         }
@@ -80,9 +76,7 @@ const Services = () => {
 
     useEffect(() => {
         fetchServices();
-
         socket.on('services-updated', fetchServices);
-
         return () => {
             socket.off('services-updated', fetchServices);
         };
@@ -93,17 +87,9 @@ const Services = () => {
             <div className="relative w-screen left-1/2 -translate-x-1/2 py-20 md:py-32 mb-12 bg-cover bg-[75%_center] md:bg-center overflow-hidden" style={{ backgroundImage: "url('/serviceimg.jpg')" }}>
                 <div className="absolute inset-0 bg-black/60" />
 
-                {/* Left Blur */}
-                <div
-                    className="absolute inset-y-0 left-0 w-1/4 backdrop-blur-xl z-0"
-                    style={{ maskImage: 'linear-gradient(to right, black, transparent)', WebkitMaskImage: 'linear-gradient(to right, black, transparent)' }}
-                />
-
-                {/* Right Blur */}
-                <div
-                    className="absolute inset-y-0 right-0 w-1/4 backdrop-blur-xl z-0"
-                    style={{ maskImage: 'linear-gradient(to left, black, transparent)', WebkitMaskImage: 'linear-gradient(to left, black, transparent)' }}
-                />
+                {/* Blurs */}
+                <div className="absolute inset-y-0 left-0 w-1/4 backdrop-blur-xl z-0" style={{ maskImage: 'linear-gradient(to right, black, transparent)', WebkitMaskImage: 'linear-gradient(to right, black, transparent)' }} />
+                <div className="absolute inset-y-0 right-0 w-1/4 backdrop-blur-xl z-0" style={{ maskImage: 'linear-gradient(to left, black, transparent)', WebkitMaskImage: 'linear-gradient(to left, black, transparent)' }} />
 
                 <div className="relative z-10">
                     <SectionHeader
@@ -115,28 +101,11 @@ const Services = () => {
                 </div>
             </div>
 
-            {loading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                    <div className="w-12 h-12 border-4 border-amber-300 border-t-transparent rounded-full animate-spin mb-4"></div>
-                    <p className="text-amber-200 font-display text-xl animate-pulse">Loading Services...</p>
-                </div>
-            ) : error ? (
-                <div className="text-center py-20 glass-panel">
-                    <p className="text-red-400 mb-4">{error}</p>
-                    <button 
-                        onClick={fetchServices}
-                        className="px-6 py-2 rounded-full border border-amber-200/40 text-amber-100 hover:border-amber-200 transition"
-                    >
-                        Try Again
-                    </button>
-                </div>
-            ) : (
-                <div className="grid md:grid-cols-3 gap-6">
-                    {services.map((service, index) => (
-                        <ServiceCard key={service._id || service.name} service={service} index={index} />
-                    ))}
-                </div>
-            )}
+            <div className="grid md:grid-cols-3 gap-6">
+                {services.map((service, index) => (
+                    <ServiceCard key={service._id || service.name} service={service} index={index} />
+                ))}
+            </div>
         </section>
     );
 };
