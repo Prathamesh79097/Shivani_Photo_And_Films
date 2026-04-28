@@ -19,19 +19,21 @@ const storage = new CloudinaryStorage({
             resource_type = 'image';
         }
 
-        return {
+        const params = {
             folder: 'shivani_gallery',
             resource_type: resource_type,
-            chunk_size: 6000000, // 6 MB chunk size to support large mobile video uploads smoothly
         };
+
+        if (resource_type === 'video') {
+            params.chunk_size = 6000000;
+        }
+
+        return params;
     },
 });
 
 const upload = multer({ 
-    storage: storage,
-    limits: {
-        fileSize: 100 * 1024 * 1024 // Set max upload to 100MB max per file limit just in case
-    }
+    storage: storage
 });
 
 module.exports = upload;

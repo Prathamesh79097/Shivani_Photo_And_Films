@@ -7,6 +7,7 @@ const GallerySection = require('../models/GallerySection');
 const auth = require('../middleware/auth');
 
 const upload = require('../../config/cloudinary');
+const cloudinary = require('cloudinary').v2;
 
 // Helper to create slug
 const createSlug = (text) => {
@@ -20,6 +21,29 @@ const createSlug = (text) => {
         .replace(/^-+/, '')       // Trim - from start of text
         .replace(/-+$/, '');      // Trim - from end of text
 };
+
+// GET /api/gallery/signature - Generate Cloudinary upload signature
+router.get('/signature', auth, (req, res) => {
+    try {
+        const timestamp = Math.round((new Date).getTime() / 1000);
+        const folder = 'shivani_gallery';
+        const signature = cloudinary.utils.api_sign_request({
+            timestamp: timestamp,
+            folder: folder
+        }, process.env.CLOUDINARY_API_SECRET);
+
+        res.json({
+            timestamp,
+            signature,
+            folder,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+            apiKey: process.env.CLOUDINARY_API_KEY
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to generate signature' });
+    }
+});
 
 // GET /api/gallery - Get all sections
 router.get('/', async (req, res) => {
@@ -80,26 +104,24 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
-// POST /api/gallery/:slug/images - Add image
+// POST /api/gallery/:slug/images - Add image URLs directly
 router.post(
     '/:slug/images',
     auth,
-    upload.single('image'),
     async (req, res) => {
         try {
-            if (!req.file) {
-                return res.status(400).json({ message: 'No file uploaded' });
+            const { files } = req.body; // Array of {url, publicId}
+            if (!files || !Array.isArray(files) || files.length === 0) {
+                return res.status(400).json({ message: 'No files provided' });
             }
 
-            const fileUrl = req.file.path;
-            const publicId = req.file.filename;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
                 return res.status(404).json({ message: 'Section not found' });
             }
 
-            section.images.push({ url: fileUrl, publicId });
+            section.images.push(...files);
             await section.save();
 
             req.io.emit('gallery-updated');
@@ -111,19 +133,17 @@ router.post(
     }
 );
 
-// POST /api/gallery/:slug/videos - Add video (using same upload middleware, field name 'video')
+// POST /api/gallery/:slug/videos - Add video URLs directly
 router.post(
     '/:slug/videos',
     auth,
-    upload.single('video'),
     async (req, res) => {
         try {
-            if (!req.file) {
-                return res.status(400).json({ message: 'No file uploaded' });
+            const { files } = req.body; // Array of {url, publicId}
+            if (!files || !Array.isArray(files) || files.length === 0) {
+                return res.status(400).json({ message: 'No files provided' });
             }
 
-            const fileUrl = req.file.path;
-            const publicId = req.file.filename;
             const section = await GallerySection.findOne({ slug: req.params.slug });
 
             if (!section) {
@@ -133,7 +153,7 @@ router.post(
             // Ensure videos array exists
             if (!section.videos) section.videos = [];
 
-            section.videos.push({ url: fileUrl, publicId });
+            section.videos.push(...files);
             await section.save();
 
             req.io.emit('gallery-updated');

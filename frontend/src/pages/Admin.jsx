@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SectionHeader from '../components/SectionHeader';
 import { API_BASE } from '../data/constants';
 import { FaStar, FaTrash, FaPlus, FaImage, FaVideo } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Admin = () => {
   const [editingService, setEditingService] = useState(null);
   const [serviceForm, setServiceForm] = useState({ name: '', price: '', perks: '' });
   const [status, setStatus] = useState({ auth: '' });
-  const [loading, setLoading] = useState({ auth: false, upload: false });
+  const [loading, setLoading] = useState({ auth: false, uploadImage: false, uploadImageStatus: '', uploadVideo: false, uploadVideoStatus: '' });
   const [adminLoading, setAdminLoading] = useState(false);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadVideo, setUploadVideo] = useState(null);
@@ -187,60 +188,144 @@ const Admin = () => {
   };
 
   const handleUploadImage = async () => {
-    if (!token || !uploadFile || !selectedSection) return;
-    setLoading((prev) => ({ ...prev, upload: true }));
-
-    const formData = new FormData();
-    formData.append('image', uploadFile);
+    if (!token || !uploadFile || uploadFile.length === 0 || !selectedSection) return;
+    setLoading((prev) => ({ ...prev, uploadImage: true, uploadImageStatus: 'Uploading...' }));
 
     try {
-      const res = await fetch(`${API_BASE}/api/gallery/${selectedSection}/images`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+      const sigRes = await fetch(`${API_BASE}/api/gallery/signature`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!sigRes.ok) throw new Error('Failed to get upload signature');
+      const { timestamp, signature, folder, cloudName, apiKey } = await sigRes.json();
+
+      const filesArray = Array.from(uploadFile);
+      let completed = 0;
+
+      const uploadedFiles = [];
+
+      const uploadPromises = filesArray.map(async (originalFile) => {
+        let file = originalFile;
+        
+        if (file.size > 10 * 1024 * 1024) {
+          try {
+            const options = {
+              maxSizeMB: 9.5, 
+              useWebWorker: true,
+            };
+            file = await imageCompression(originalFile, options);
+          } catch (e) {
+            console.error("Compression failed", e);
+          }
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('api_key', apiKey);
+        formData.append('timestamp', timestamp);
+        formData.append('signature', signature);
+        formData.append('folder', folder);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!res.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const data = await res.json();
+        uploadedFiles.push({ url: data.secure_url, publicId: data.public_id });
+
+        completed++;
+        setLoading((prev) => ({ ...prev, uploadImageStatus: `Uploading...` }));
       });
 
-      if (res.ok) {
-        setUploadFile(null);
-        document.getElementById('fileInput').value = '';
-        fetchAdminData(token);
-      } else {
-        alert('Upload failed');
-      }
+      await Promise.all(uploadPromises);
+
+      const saveRes = await fetch(`${API_BASE}/api/gallery/${selectedSection}/images`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ files: uploadedFiles }),
+      });
+
+      if (!saveRes.ok) throw new Error('Failed to save to database');
+
+      setUploadFile(null);
+      document.getElementById('fileInput').value = '';
+      fetchAdminData(token);
     } catch (err) {
       console.error(err);
       alert('Upload failed');
     } finally {
-      setLoading((prev) => ({ ...prev, upload: false }));
+      setLoading((prev) => ({ ...prev, uploadImage: false, uploadImageStatus: '' }));
     }
   };
 
   const handleUploadVideo = async () => {
-    if (!token || !uploadVideo || !selectedSection) return;
-    setLoading((prev) => ({ ...prev, upload: true }));
-
-    const formData = new FormData();
-    formData.append('video', uploadVideo);
+    if (!token || !uploadVideo || uploadVideo.length === 0 || !selectedSection) return;
+    setLoading((prev) => ({ ...prev, uploadVideo: true, uploadVideoStatus: 'Uploading...' }));
 
     try {
-      const res = await fetch(`${API_BASE}/api/gallery/${selectedSection}/videos`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+      const sigRes = await fetch(`${API_BASE}/api/gallery/signature`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!sigRes.ok) throw new Error('Failed to get upload signature');
+      const { timestamp, signature, folder, cloudName, apiKey } = await sigRes.json();
+
+      const filesArray = Array.from(uploadVideo);
+      let completed = 0;
+
+      const uploadedFiles = [];
+
+      const uploadPromises = filesArray.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('api_key', apiKey);
+        formData.append('timestamp', timestamp);
+        formData.append('signature', signature);
+        formData.append('folder', folder);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!res.ok) {
+          throw new Error('Video upload failed');
+        }
+
+        const data = await res.json();
+        uploadedFiles.push({ url: data.secure_url, publicId: data.public_id });
+
+        completed++;
+        setLoading((prev) => ({ ...prev, uploadVideoStatus: `Uploading...` }));
       });
 
-      if (res.ok) {
-        setUploadVideo(null);
-        document.getElementById('videoInput').value = '';
-        fetchAdminData(token);
-      } else {
-        alert('Video upload failed');
-      }
+      await Promise.all(uploadPromises);
+
+      const saveRes = await fetch(`${API_BASE}/api/gallery/${selectedSection}/videos`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ files: uploadedFiles }),
+      });
+
+      if (!saveRes.ok) throw new Error('Failed to save to database');
+
+      setUploadVideo(null);
+      document.getElementById('videoInput').value = '';
+      fetchAdminData(token);
     } catch (err) {
       console.error(err);
       alert('Video upload failed');
     } finally {
-      setLoading((prev) => ({ ...prev, upload: false }));
+      setLoading((prev) => ({ ...prev, uploadVideo: false, uploadVideoStatus: '' }));
     }
   };
 
@@ -660,15 +745,16 @@ const Admin = () => {
                         type="file"
                         id="fileInput"
                         accept="image/*"
-                        onChange={(e) => setUploadFile(e.target.files[0])}
+                        multiple
+                        onChange={(e) => setUploadFile(e.target.files)}
                         className="text-slate-300 w-full file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 transition-colors bg-slate-800/50 rounded-lg p-1"
                       />
                       <button
                         onClick={handleUploadImage}
-                        disabled={!selectedSection || !uploadFile || loading.upload}
-                        className="bg-green-600/80 text-white px-4 py-2 rounded-lg hover:bg-green-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm"
+                        disabled={!selectedSection || !uploadFile || uploadFile.length === 0 || loading.uploadImage}
+                        className="bg-green-600/80 text-white px-4 py-2 rounded-lg hover:bg-green-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm whitespace-nowrap min-w-[120px]"
                       >
-                        <FaImage className="inline mr-1" /> {loading.upload ? 'Uploading to Cloud...' : 'Upload'}
+                        <FaImage className="inline mr-1" /> {loading.uploadImage && loading.uploadImageStatus ? loading.uploadImageStatus : 'Upload'}
                       </button>
                     </div>
                   </div>
@@ -680,15 +766,16 @@ const Admin = () => {
                       type="file"
                       id="videoInput"
                       accept="video/*"
-                      onChange={(e) => setUploadVideo(e.target.files[0])}
+                      multiple
+                      onChange={(e) => setUploadVideo(e.target.files)}
                       className="text-slate-300 w-full file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 transition-colors bg-slate-800/50 rounded-lg p-1"
                     />
                     <button
                       onClick={handleUploadVideo}
-                      disabled={!selectedSection || !uploadVideo || loading.upload}
-                      className="bg-blue-600/80 text-white px-4 py-2 rounded-lg hover:bg-blue-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm"
+                      disabled={!selectedSection || !uploadVideo || uploadVideo.length === 0 || loading.uploadVideo}
+                      className="bg-blue-600/80 text-white px-4 py-2 rounded-lg hover:bg-blue-500 disabled:opacity-50 transition-colors font-medium flex-shrink-0 text-sm whitespace-nowrap min-w-[120px]"
                     >
-                      <FaVideo className="inline mr-1" /> {loading.upload ? 'Uploading to Cloud...' : 'Upload'}
+                      <FaVideo className="inline mr-1" /> {loading.uploadVideo && loading.uploadVideoStatus ? loading.uploadVideoStatus : 'Upload'}
                     </button>
                   </div>
                 </div>
