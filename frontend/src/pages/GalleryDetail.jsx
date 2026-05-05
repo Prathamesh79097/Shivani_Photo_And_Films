@@ -12,10 +12,13 @@ const AutoPlayVideo = ({ src }) => {
     const videoRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
 
+    const playPromiseRef = useRef(null);
+
     useEffect(() => {
         const isMobile = window.innerWidth < 768;
+        // Use the middle 20% of the screen. Only one video can be here at a time.
         const options = isMobile 
-            ? { threshold: 0.7, rootMargin: "-20% 0px -20% 0px" } 
+            ? { threshold: 0, rootMargin: "-40% 0px -40% 0px" } 
             : { threshold: 0.6 };
 
         const observer = new IntersectionObserver(
@@ -29,13 +32,32 @@ const AutoPlayVideo = ({ src }) => {
                         });
                     }
                     videoRef.current.muted = false;
-                    videoRef.current.play().catch(err => {
-                        console.warn("Autoplay with sound blocked, trying muted:", err);
-                        videoRef.current.muted = true;
-                        videoRef.current.play();
-                    });
+                    const promise = videoRef.current.play();
+                    playPromiseRef.current = promise;
+                    
+                    if (promise !== undefined) {
+                        promise.catch(err => {
+                            if (err.name !== 'AbortError') {
+                                console.warn("Autoplay with sound blocked, trying muted:", err);
+                                videoRef.current.muted = true;
+                                const mutedPromise = videoRef.current.play();
+                                playPromiseRef.current = mutedPromise;
+                                if (mutedPromise !== undefined) {
+                                    mutedPromise.catch(e => console.log("Muted play failed", e));
+                                }
+                            }
+                        });
+                    }
                 } else {
-                    videoRef.current.pause();
+                    if (playPromiseRef.current !== undefined && playPromiseRef.current !== null) {
+                        playPromiseRef.current.then(() => {
+                            if (videoRef.current) videoRef.current.pause();
+                        }).catch(() => {
+                            // play was aborted
+                        });
+                    } else {
+                        if (videoRef.current) videoRef.current.pause();
+                    }
                 }
             },
             options
@@ -79,9 +101,24 @@ const AutoPlayVideo = ({ src }) => {
         e.stopPropagation();
         if (videoRef.current) {
             if (videoRef.current.paused) {
-                videoRef.current.play();
+                if (window.innerWidth < 768) {
+                    document.querySelectorAll('video').forEach(v => {
+                        if (v !== videoRef.current && !v.paused) v.pause();
+                    });
+                }
+                const promise = videoRef.current.play();
+                playPromiseRef.current = promise;
+                if (promise !== undefined) {
+                    promise.catch(() => {});
+                }
             } else {
-                videoRef.current.pause();
+                if (playPromiseRef.current !== undefined && playPromiseRef.current !== null) {
+                    playPromiseRef.current.then(() => {
+                        if (videoRef.current) videoRef.current.pause();
+                    }).catch(() => {});
+                } else {
+                    if (videoRef.current) videoRef.current.pause();
+                }
             }
         }
     };
