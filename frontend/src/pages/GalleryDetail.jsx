@@ -13,9 +13,21 @@ const AutoPlayVideo = ({ src }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
+        const isMobile = window.innerWidth < 768;
+        const options = isMobile 
+            ? { threshold: 0.7, rootMargin: "-20% 0px -20% 0px" } 
+            : { threshold: 0.6 };
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
+                    if (isMobile) {
+                        document.querySelectorAll('video').forEach(v => {
+                            if (v !== videoRef.current && !v.paused) {
+                                v.pause();
+                            }
+                        });
+                    }
                     videoRef.current.muted = false;
                     videoRef.current.play().catch(err => {
                         console.warn("Autoplay with sound blocked, trying muted:", err);
@@ -26,7 +38,7 @@ const AutoPlayVideo = ({ src }) => {
                     videoRef.current.pause();
                 }
             },
-            { threshold: 0.6 }
+            options
         );
 
         if (videoRef.current) {
@@ -36,6 +48,29 @@ const AutoPlayVideo = ({ src }) => {
         return () => {
             if (videoRef.current) {
                 observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        const handlePlay = () => {
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('video').forEach(v => {
+                    if (v !== videoRef.current && !v.paused) {
+                        v.pause();
+                    }
+                });
+            }
+        };
+        
+        const currentVideo = videoRef.current;
+        if (currentVideo) {
+            currentVideo.addEventListener('play', handlePlay);
+        }
+        
+        return () => {
+            if (currentVideo) {
+                currentVideo.removeEventListener('play', handlePlay);
             }
         };
     }, []);
